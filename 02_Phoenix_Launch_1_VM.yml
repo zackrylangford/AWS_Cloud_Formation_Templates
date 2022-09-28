@@ -1,5 +1,5 @@
 
-Description: Template for launching a single VM for Pheonix Corporation
+Description: Template for launching a single VM
 Parameters: 
   VMInstanceType:
     Description: Type of VM that the user wants to launch 
