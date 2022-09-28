@@ -10,3 +10,6 @@ Need mappings for Regions, availability zones?, etc.
 
 3. Need to finish going through and commenting on all of the templates
 in order to help make it clear how to use the templates in the future. 
+
+4. Create diagrams and save them alongside the templates for a visual 
+representation of each template 
