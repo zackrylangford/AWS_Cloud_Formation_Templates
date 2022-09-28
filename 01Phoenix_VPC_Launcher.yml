@@ -1,0 +1,266 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: VPC with 4 subnets Template for Pheonix Corporation
+
+Parameters: 
+  01VPCName: 
+    Description: Input a unique VPC Name
+    Type: String
+    Default: phoenix-corp-vpc
+  02VPCCidrBlock:
+    Description: Input cidr block for the vpc (ex. 192.168.0.0/16)
+    Type: String
+    Default: 192.168.0.0/16
+  03SubnetName:
+    Description: Input a subnet name for department identification (ex. Development)
+    Type: String
+    Default: Development
+  04SubnetCidrBlock: 
+    Description: Input the subnet cidr block (ex 192.168.10.0/24)
+    Type: String
+    Default: 192.168.10.0/24
+  05SubnetName:
+    Description: Input a subnet name for department identification (ex. Development)
+    Type: String
+    Default: QA
+  06SubnetCidrBlock: 
+    Description: Input the subnet cidr block (ex 192.168.10.0/24)
+    Type: String
+    Default: 192.168.20.0/24
+  07SubnetName:
+    Description: Input a subnet name for department identification (ex. Development)
+    Type: String
+    Default: QC
+  08SubnetCidrBlock: 
+    Description: Input the subnet cidr block (ex 192.168.10.0/24)
+    Type: String
+    Default: 192.168.30.0/24
+  09SubnetName:
+    Description: Input a subnet name for department identification (ex. Development)
+    Type: String
+    Default: Production
+  10SubnetCidrBlock: 
+    Description: Input the subnet cidr block (ex 192.168.10.0/24)
+    Type: String
+    Default: 192.168.40.0/24
+
+Resources: 
+  VPC1: 
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref 02VPCCidrBlock
+      Tags:
+        - Key: Name
+          Value: !Ref 01VPCName
+
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      VpcId: 
+        Ref: VPC1
+      CidrBlock: !Ref 04SubnetCidrBlock
+      Tags:
+        - Key: Name
+          Value: !Ref 03SubnetName
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      VpcId: 
+        Ref: VPC1
+      CidrBlock: !Ref 06SubnetCidrBlock
+      Tags:
+        - Key: Name
+          Value: !Ref 05SubnetName
+  Subnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      VpcId: 
+        Ref: VPC1
+      CidrBlock: !Ref 08SubnetCidrBlock
+      Tags:
+        - Key: Name
+          Value: !Ref 07SubnetName
+  Subnet4:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      VpcId: 
+        Ref: VPC1
+      CidrBlock: !Ref 10SubnetCidrBlock
+      Tags:
+        - Key: Name
+          Value: !Ref 09SubnetName
+  Development:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Development group 1 SSH
+      VpcId: 
+        Ref: VPC1
+      SecurityGroupIngress:
+        - IpProtocol: tcp 
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Ref 03SubnetName
+  QA:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for QA group 2 SSH
+      VpcId: 
+        Ref: VPC1
+      SecurityGroupIngress:
+        - IpProtocol: tcp 
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Ref 05SubnetName
+  QC:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for QC group 3 SSH
+      VpcId: 
+        Ref: VPC1
+      SecurityGroupIngress:
+        - IpProtocol: tcp 
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Ref 07SubnetName
+  Production:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Production group 4 SSH
+      VpcId: 
+        Ref: VPC1
+      SecurityGroupIngress:
+        - IpProtocol: tcp 
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Ref 09SubnetName
+
+        
+  internetgateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: internetgateway
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: 
+        Ref: VPC1
+      InternetGatewayId: !Ref internetgateway
+  
+  PublicRoute1: 
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - AttachGateway
+    Properties:
+      RouteTableId: !Ref group1routeTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internetgateway
+      
+  PublicRoute2: 
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - AttachGateway
+    Properties:
+      RouteTableId: !Ref group2routeTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internetgateway
+
+
+  PublicRoute3: 
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - AttachGateway
+    Properties:
+      RouteTableId: !Ref group3routeTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internetgateway
+      
+  PublicRoute4: 
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - AttachGateway
+    Properties:
+      RouteTableId: !Ref group4routeTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internetgateway
+
+  group1routeTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: VPC1
+      Tags:
+        - Key: Name
+          Value: Development_RT
+  routeTable1AssocName:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: 
+        Ref: Subnet1
+      RouteTableId: 
+        Ref: group1routeTable
+
+  group2routeTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: VPC1
+      Tags:
+        - Key: Name
+          Value: QC_RT
+
+  routeTable2AssocName:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: 
+        Ref: Subnet2
+      RouteTableId: 
+        Ref: group2routeTable
+  
+  group3routeTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: VPC1
+      Tags:
+        - Key: Name
+          Value: QA_RT
+  routeTable3AssocName:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: 
+        Ref: Subnet3
+      RouteTableId: 
+        Ref: group3routeTable
+  
+  group4routeTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: VPC1
+      Tags:
+        - Key: Name
+          Value: Production_RT
+  routeTable4AssocName:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: 
+        Ref: Subnet4
+      RouteTableId: 
+        Ref: group4routeTable
