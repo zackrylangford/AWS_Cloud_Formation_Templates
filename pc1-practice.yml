@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation Template for pc1-cloud monitoring
+
+Resources: 
+  webserver1:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: 
+      DisableApiTermination: 
+      ImageId: 
+      InstanceType: 
+      Monitoring: true|false
+      SecurityGroupIds:
+        - sg-id
+      UserData: !Base64 |
+        #!/bin/bash -ex
+        sudo yum update -y
+        sudo yum install httpd
+        sudo systemctl enable httpd
+        sudo systemctl restart httpd
+        echo -e "$(sudo nano "This is a website for NS Sports" > /var/www/index.html)" 
+      Tags:
+        - Key: Name
+          Value: NS-Sport-WS1
+  webserver2:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: 
+      DisableApiTermination: 
+      ImageId: 
+      InstanceType: 
+      Monitoring: true|false
+      SecurityGroupIds:
+        - sg-id
+      UserData: !Base64 |
+        #!/bin/bash -ex
+        # put your script here
+      Tags:
+        - Key: key
+          Value: value
+
+  ebsvolume1:
+    Type: AWS::EC2::Volume
+    Properties:
+      AutoEnableIO: true|false
+      AvailabilityZone: 
+      Encrypted: true|false
+      KmsKeyId: 
+      Size: 0
+      SnapshotId: snap-
+      VolumeType: standard|io1|gp2
+      Tags:
+        - Key: key
+          Value: value
+  ebsVolume2:
+    Type: AWS::EC2::Volume
+    Properties:
+      AutoEnableIO: true|false
+      AvailabilityZone: 
+      Encrypted: true|false
+      KmsKeyId: 
+      Size: 0
+      SnapshotId: snap-
+      VolumeType: standard|io1|gp2
+      Tags:
+        - Key: key
+          Value: value
+Outputs:
