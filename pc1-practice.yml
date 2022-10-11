@@ -1,68 +1,68 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: CloudFormation Template for pc1-cloud monitoring
 
+Parameters:
+  EC2Subnet1: 
+  EC2Subnet2: 
+
+
 Resources: 
   webserver1:
     Type: AWS::EC2::Instance
     Properties:
-      KeyName: 
-      DisableApiTermination: 
-      ImageId: 
-      InstanceType: 
-      Monitoring: true|false
-      SecurityGroupIds:
-        - sg-id
+      AvailabilityZone: us-east-1a
+      KeyName: practicetest
+      ImageId: ami-026b57f3c383c2eec
+      InstanceType: t2.micro
       UserData: !Base64 |
         #!/bin/bash -ex
         sudo yum update -y
         sudo yum install httpd
         sudo systemctl enable httpd
         sudo systemctl restart httpd
-        echo -e "$(sudo nano "This is a website for NS Sports" > /var/www/index.html)" 
+        echo -e "$(sudo nano "This is a website for NS Sports" > /var/www/html/index.html)" 
       Tags:
         - Key: Name
           Value: NS-Sport-WS1
   webserver2:
     Type: AWS::EC2::Instance
     Properties:
-      KeyName: 
-      DisableApiTermination: 
-      ImageId: 
-      InstanceType: 
-      Monitoring: true|false
-      SecurityGroupIds:
-        - sg-id
+      AvailabilityZone: us-east-1b
+      KeyName: practicetest
+      ImageId: ami-026b57f3c383c2eec
+      InstanceType: t2.micro
+      Tags:
+        - Key: Name
+          Value: NS-Sport-WS2
       UserData: !Base64 |
         #!/bin/bash -ex
-        # put your script here
-      Tags:
-        - Key: key
-          Value: value
+        sudo yum update -y
+        sudo yum install httpd -y
+        sudo systemctl enable httpd
+        sudo systemctl restart httpd
+        echo -e "$(sudo nano "This is a website for NS Sports" > /var/www/html/index.html)" 
+
 
   ebsvolume1:
     Type: AWS::EC2::Volume
     Properties:
-      AutoEnableIO: true|false
-      AvailabilityZone: 
-      Encrypted: true|false
-      KmsKeyId: 
-      Size: 0
-      SnapshotId: snap-
-      VolumeType: standard|io1|gp2
+      AvailabilityZone: us-east-1a
+      Size: 8
+      VolumeType: gp2
       Tags:
-        - Key: key
-          Value: value
+        - Key: Name
+          Value: WS1-EBS
   ebsVolume2:
     Type: AWS::EC2::Volume
     Properties:
-      AutoEnableIO: true|false
-      AvailabilityZone: 
-      Encrypted: true|false
-      KmsKeyId: 
-      Size: 0
-      SnapshotId: snap-
-      VolumeType: standard|io1|gp2
+      AvailabilityZone: us-east-1b
+      Size: 8
+      VolumeType: gp2
       Tags:
-        - Key: key
-          Value: value
-Outputs:
+        - Key: Name
+          Value: WS2-EBS
+
+
+
+  ELB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer

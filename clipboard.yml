@@ -1,0 +1,39 @@
+
+# ELB version 1
+  ELB:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      AvailabilityZones:
+      - us-east-1a
+      - us-east-1b
+      Instances:
+        - Ref: webserver1
+          Ref: webserver2
+      Listeners:
+        - LoadBalancerPort: 80
+          InstancePort: 80
+          Protocol: HTTP
+      HealthCheck:
+        Target: HTTP:80/var/www/html
+        HealthyThreshold: 2
+        Interval: 10
+        Timeout: 5
+        UnhealthyThreshold: 3      
+
+
+
+
+# EBS attachements
+          
+  ebs1attachment:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      InstanceId: webserver1
+      VolumeId: ebsVolume1
+      Device: /dev/sdh
+  ebs2attachment:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      InstanceId: webserver2
+      VolumeId: ebsVolume2
+      Device: /dev/sdh
